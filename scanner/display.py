@@ -3,8 +3,11 @@ Terminal rendering for terminal-ip-scanner.
 All Rich-based output (banner, scan animation, result panels) lives here.
 """
 
+from __future__ import annotations
+
 import time
 import random
+import json as json_module
 
 from rich.console import Console
 from rich.table import Table
@@ -14,6 +17,7 @@ from rich.align import Align
 from rich.box import HEAVY
 
 from .banner import BANNER, TAGLINE, SCAN_STEPS, HELP_LINES, GREEN, DIM_GREEN, RED
+from .errors import ScannerError
 
 console = Console()
 
@@ -31,24 +35,15 @@ def print_help():
     console.print()
 
 
-def fake_scan_lines(target: str):
+def fake_scan_lines(target: str, animate: bool = True):
     """Print a few fake 'hacking' status lines for flavor before the real lookup."""
     for step in SCAN_STEPS:
         console.print(f"[{DIM_GREEN}]>[/{DIM_GREEN}] {step.format(target=target)}", style=DIM_GREEN)
-        time.sleep(random.uniform(0.08, 0.18))
+        if animate:
+            time.sleep(random.uniform(0.08, 0.18))
 
 
 def render_result(data: dict):
-    if not data.get("success", True):
-        console.print(
-            Panel(
-                f"[{RED}]LOOKUP FAILED[/{RED}]\n{data.get('message', 'unknown error')}",
-                border_style="red",
-                box=HEAVY,
-            )
-        )
-        return
-
     ip = data.get("ip", "?")
     city = data.get("city") or "UNKNOWN"
     region = data.get("region") or "-"
@@ -93,8 +88,13 @@ def render_result(data: dict):
         console.print(f"[{DIM_GREEN}]  map ->[/{DIM_GREEN}] {maps_url}\n")
 
 
-def print_connection_error(err: Exception):
-    console.print(f"[{RED}]CONNECTION ERROR:[/{RED}] {err}\n")
+def print_json(data: dict):
+    """Print raw JSON — used with --json flag, no styling, script-friendly."""
+    console.print_json(json_module.dumps(data))
+
+
+def print_error(err: ScannerError):
+    console.print(f"[{RED}]ERROR:[/{RED}] {err}\n")
 
 
 def print_session_closed():
@@ -103,6 +103,10 @@ def print_session_closed():
 
 def print_aborted():
     console.print(f"\n[{RED}]aborted by user[/{RED}]")
+
+
+def print_saved(path: str):
+    console.print(f"[{DIM_GREEN}]saved ->[/{DIM_GREEN}] {path}\n")
 
 
 def rule(label: str):
