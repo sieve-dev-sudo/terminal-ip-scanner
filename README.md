@@ -25,6 +25,7 @@
 - In-memory cache : មិន query API ដដែលៗសម្រាប់ IP ដូចគ្នា
 - Unit tests ពេញលេញ (pytest, mock API)
 - Banner ស្វ័យប្រវត្តិកែតាមទំហំ terminal : មិនខូច/wrap ខុសនៅលើ Kali ឬ terminal ណាមួយ
+- បង្ហាញ developer credit ក្នុង banner
 
 ---
 
@@ -49,18 +50,18 @@ terminal-ip-scanner/
 ├── scanner/
 │   ├── __init__.py
 │   ├── banner.py        → ASCII art, ពណ៌, text constants
-│   ├── errors.py         → custom exceptions
-│   ├── cache.py           → in-memory lookup cache
-│   ├── lookup.py          → API calls (ipwho.is) : data ត្រឹមតែប៉ុណ្ណោះ
-│   ├── display.py         → terminal rendering ទាំងអស់ (Rich)
-│   └── cli.py             → arg parsing + interactive menu
+│   ├── errors.py        → custom exceptions
+│   ├── cache.py         → in-memory lookup cache
+│   ├── lookup.py        → API calls (ipwho.is) : data ត្រឹមតែប៉ុណ្ណោះ
+│   ├── display.py       → terminal rendering ទាំងអស់ (Rich)
+│   └── cli.py           → arg parsing + interactive menu
 ├── tests/
 │   ├── test_lookup.py
 │   ├── test_cache.py
 │   ├── test_cli.py
 │   └── test_banner.py
-├── main.py               → entry point
-├── pyproject.toml        → packaging (pip install .)
+├── main.py              → entry point
+├── pyproject.toml       → packaging (pip install .)
 ├── requirements.txt
 ├── requirements-dev.txt
 ├── LICENSE
@@ -94,6 +95,12 @@ terminal-ip-scanner/
 pip install -r requirements-dev.txt
 pytest -v
 ```
+
+---
+
+## Author
+
+Developed by **Mr. Siev E**
 
 ---
 
