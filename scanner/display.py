@@ -15,7 +15,6 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
-from rich.align import Align
 from rich.box import HEAVY
 
 from .banner import banner_for, TAGLINE, SCAN_STEPS, HELP_LINES, GREEN, DIM_GREEN, RED
@@ -53,7 +52,7 @@ def print_banner():
         # Last-resort fallback: strip to plain ASCII no matter what.
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
-    console.print(Align.center(Text(TAGLINE, style=DIM_GREEN)))
+    console.print(Text(TAGLINE, style=DIM_GREEN))
     console.print()
 
 
