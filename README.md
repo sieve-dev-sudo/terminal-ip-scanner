@@ -24,6 +24,21 @@
 - IP validation + error handling (invalid IP, timeout, no internet)
 - In-memory cache : មិន query API ដដែលៗសម្រាប់ IP ដូចគ្នា
 - Unit tests ពេញលេញ (pytest, mock API)
+- Banner ស្វ័យប្រវត្តិកែតាមទំហំ terminal : មិនខូច/wrap ខុសនៅលើ Kali ឬ terminal ណាមួយ
+
+---
+
+## 🖥️ Terminal Compatibility (Kali-tested)
+
+Banner detect terminal width និង encoding ដោយស្វ័យប្រវត្តិ ដើម្បីកុំឲ្យខូចពេល clone លើម៉ាស៊ីនថ្មី :
+
+| លក្ខខណ្ឌ terminal | អ្វីដែលបង្ហាញ |
+|---|---|
+| ធំ (≥82 columns) + UTF-8 | Full block-letter ASCII art |
+| ធម្មតា (Kali default 80 columns) + UTF-8 | Boxed banner តូច តម្រូវទំហំពិត |
+| Non-UTF-8 locale / SSH minimal | ASCII box ធម្មតា (`+`, `-`, `|`) គ្មាន Unicode |
+
+មិនចាំបាច់ setup អ្វីទេ : វា detect ដោយស្វ័យប្រវត្តិរាល់ដង run។
 
 ---
 
@@ -33,8 +48,8 @@
 terminal-ip-scanner/
 ├── scanner/
 │   ├── __init__.py
-│   ├── banner.py          → ASCII art, ពណ៌, text constants
-│   ├── errors.py          → custom exceptions
+│   ├── banner.py        → ASCII art, ពណ៌, text constants
+│   ├── errors.py         → custom exceptions
 │   ├── cache.py           → in-memory lookup cache
 │   ├── lookup.py          → API calls (ipwho.is) : data ត្រឹមតែប៉ុណ្ណោះ
 │   ├── display.py         → terminal rendering ទាំងអស់ (Rich)
@@ -42,9 +57,10 @@ terminal-ip-scanner/
 ├── tests/
 │   ├── test_lookup.py
 │   ├── test_cache.py
-│   └── test_cli.py
-├── main.py                → entry point
-├── pyproject.toml         → packaging (pip install .)
+│   ├── test_cli.py
+│   └── test_banner.py
+├── main.py               → entry point
+├── pyproject.toml        → packaging (pip install .)
 ├── requirements.txt
 ├── requirements-dev.txt
 ├── LICENSE
