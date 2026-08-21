@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import time
 import random
+import shutil
+import sys
 import json as json_module
 
 from rich.console import Console
@@ -16,14 +18,41 @@ from rich.text import Text
 from rich.align import Align
 from rich.box import HEAVY
 
-from .banner import BANNER, TAGLINE, SCAN_STEPS, HELP_LINES, GREEN, DIM_GREEN, RED
+from .banner import banner_for, TAGLINE, SCAN_STEPS, HELP_LINES, GREEN, DIM_GREEN, RED
 from .errors import ScannerError
 
 console = Console()
 
 
+def _terminal_supports_unicode() -> bool:
+    """Best-effort check that stdout can render Unicode box-drawing chars.
+    True on virtually every modern Linux/Kali/macOS terminal; only false
+    on the rare non-UTF-8 locale (e.g. some minimal SSH/container setups)."""
+    encoding = getattr(sys.stdout, "encoding", None) or ""
+    try:
+        "─│┌┐└┘".encode(encoding)
+        return True
+    except (LookupError, UnicodeEncodeError, TypeError):
+        return False
+
+
 def print_banner():
-    console.print(f"[{GREEN}]{BANNER}[/{GREEN}]")
+    """
+    Print a banner sized and encoded to match the current terminal, so it
+    never wraps or renders as garbled characters -- the two ways an ASCII
+    banner typically "breaks" after a fresh `git clone` on a new machine
+    (e.g. an 80-column default terminal on Kali, or a non-UTF-8 SSH session).
+    """
+    width = shutil.get_terminal_size(fallback=(80, 24)).columns
+    use_unicode = _terminal_supports_unicode()
+    banner = banner_for(width, use_unicode=use_unicode)
+
+    try:
+        console.print(f"[{GREEN}]{banner}[/{GREEN}]")
+    except UnicodeEncodeError:
+        # Last-resort fallback: strip to plain ASCII no matter what.
+        console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
+
     console.print(Align.center(Text(TAGLINE, style=DIM_GREEN)))
     console.print()
 
