@@ -53,6 +53,7 @@ def print_banner():
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
     console.print(Text(TAGLINE, style=DIM_GREEN))
+    console.print()
     console.print(Text(CREDIT, style=DIM_GREEN))
     console.print()
 
