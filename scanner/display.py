@@ -17,7 +17,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.box import HEAVY
 
-from .banner import banner_for, TAGLINE, SCAN_STEPS, HELP_LINES, GREEN, DIM_GREEN, RED
+from .banner import banner_for, TAGLINE, CREDIT, SCAN_STEPS, HELP_LINES, GREEN, DIM_GREEN, RED
 from .errors import ScannerError
 
 console = Console()
@@ -53,6 +53,7 @@ def print_banner():
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
     console.print(Text(TAGLINE, style=DIM_GREEN))
+    console.print(Text(CREDIT, style=DIM_GREEN))
     console.print()
 
 

@@ -20,6 +20,7 @@ RED = "bold red"
 
 TITLE = "TERMINAL-IP-SCANNER"
 TAGLINE = "network geolocation utility // ctrl+c to quit"
+CREDIT = "developed by Mr. Siev E"
 
 # Full block-letter banner. Widest line is 81 columns, so this should only
 # be shown when the terminal is comfortably wider than that (see
