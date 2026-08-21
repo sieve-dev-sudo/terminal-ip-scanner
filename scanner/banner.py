@@ -22,22 +22,22 @@ TITLE = "TERMINAL-IP-SCANNER"
 TAGLINE = "network geolocation utility // ctrl+c to quit"
 CREDIT = "developed by Mr. Siev E"
 
-# Full block-letter banner. Widest line is 77 columns, so this should only
+# Full block-letter banner. Widest line is 79 columns, so this should only
 # be shown when the terminal is comfortably wider than that (see
 # banner_for below) — otherwise most terminals will wrap it and the
-# box-drawing characters will look broken. Includes an explicit hyphen
-# between TERMINAL and IP so it reads clearly and doesn't blend into an
-# ambiguous shape (earlier version could be misread as ending in "JP").
+# box-drawing characters will look broken. Uses a full-height "║" bar
+# between TERMINAL and IP (instead of a small mid-height hyphen) so the
+# separator is unambiguous at a glance.
 BANNER_FULL = r"""
-████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗      ██╗██████╗ 
-╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║      ██║██╔══██╗
-   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║█████╗██║██████╔╝
-   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║╚════╝██║██╔═══╝ 
-   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗ ██║██║     
-   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═╝╚═╝     
-                                S C A N N E R                                
+████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗      ║ ██╗██████╗
+╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║      ║ ██║██╔══██╗
+   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║      ║ ██║██████╔╝
+   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║      ║ ██║██╔═══╝
+   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗ ║ ██║██║
+   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ║ ╚═╝╚═╝
+                                 S C A N N E R
 """
-BANNER_FULL_WIDTH = 78  # widest line, plus a small safety margin
+BANNER_FULL_WIDTH = 80  # widest line, plus a small safety margin
 
 SCAN_STEPS = [
     "initializing trace on {target}...",
