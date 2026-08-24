@@ -39,7 +39,7 @@ Banner detect terminal width និង encoding ដោយស្វ័យប្�
 | ធម្មតា (Kali default 80 columns) + UTF-8 | Boxed banner តូច តម្រូវទំហំពិត |
 | Non-UTF-8 locale / SSH minimal | ASCII box ធម្មតា (`+`, `-`, `|`) គ្មាន Unicode |
 
-មិនចាំបាច់ setup អ្វីទេ : វា detect ដោយស្វ័យប្រវត្តិរាល់ដង run។
+> មិនចាំបាច់ setup អ្វីទេ : វា detect ដោយស្វ័យប្រវត្តិរាល់ដង run
 
 ---
 
