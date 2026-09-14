@@ -17,7 +17,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.box import HEAVY
 
-from .banner import banner_for, TAGLINE, CREDIT, SCAN_STEPS, HELP_LINES, CYAN, DIM_CYAN, MAGENTA, RED
+from .banner import banner_for, TAGLINE, CREDIT, SCAN_STEPS, HELP_LINES, PRIMARY, DIM, ACCENT, RED
 from .errors import ScannerError
 
 console = Console()
@@ -47,28 +47,28 @@ def print_banner():
     banner = banner_for(width, use_unicode=use_unicode)
 
     try:
-        console.print(f"[{CYAN}]{banner}[/{CYAN}]")
+        console.print(f"[{PRIMARY}]{banner}[/{PRIMARY}]")
     except UnicodeEncodeError:
         # Last-resort fallback: strip to plain ASCII no matter what.
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
-    console.print(Text(TAGLINE, style=DIM_CYAN))
+    console.print(Text(TAGLINE, style=DIM))
     console.print()
-    console.print(Text(CREDIT, style=MAGENTA))
+    console.print(Text(CREDIT, style=ACCENT))
     console.print()
 
 
 def print_help():
-    console.print(f"[{MAGENTA}]commands:[/{MAGENTA}]")
+    console.print(f"[{ACCENT}]commands:[/{ACCENT}]")
     for cmd, desc in HELP_LINES:
-        console.print(f"  [{CYAN}]{cmd:<16}[/{CYAN}] {desc}")
+        console.print(f"  [{PRIMARY}]{cmd:<16}[/{PRIMARY}] {desc}")
     console.print()
 
 
 def fake_scan_lines(target: str, animate: bool = True):
     """Print a few fake 'hacking' status lines for flavor before the real lookup."""
     for step in SCAN_STEPS:
-        console.print(f"[{DIM_CYAN}]>[/{DIM_CYAN}] {step.format(target=target)}", style=DIM_CYAN)
+        console.print(f"[{DIM}]>[/{DIM}] {step.format(target=target)}", style=DIM)
         if animate:
             time.sleep(random.uniform(0.08, 0.18))
 
@@ -89,8 +89,8 @@ def render_result(data: dict):
     asn = conn.get("asn") or "-"
 
     table = Table(show_header=False, box=None, padding=(0, 1))
-    table.add_column(style=MAGENTA, justify="right")
-    table.add_column(style=CYAN)
+    table.add_column(style=ACCENT, justify="right")
+    table.add_column(style=PRIMARY)
 
     table.add_row("TARGET IP", ip)
     table.add_row("CITY", city)
@@ -106,16 +106,16 @@ def render_result(data: dict):
     console.print(
         Panel(
             table,
-            title=f"[{MAGENTA}]TARGET ACQUIRED[/{MAGENTA}]",
-            subtitle=f"[{DIM_CYAN}]accuracy: city/ISP-level, not exact address[/{DIM_CYAN}]",
-            border_style="bright_cyan",
+            title=f"[{ACCENT}]TARGET ACQUIRED[/{ACCENT}]",
+            subtitle=f"[{DIM}]accuracy: city/ISP-level, not exact address[/{DIM}]",
+            border_style="bright_green",
             box=HEAVY,
         )
     )
 
     if lat and lon:
         maps_url = f"https://www.google.com/maps?q={lat},{lon}"
-        console.print(f"[{DIM_CYAN}]  map ->[/{DIM_CYAN}] {maps_url}\n")
+        console.print(f"[{DIM}]  map ->[/{DIM}] {maps_url}\n")
 
 
 def print_json(data: dict):
@@ -128,7 +128,7 @@ def print_error(err: ScannerError):
 
 
 def print_session_closed():
-    console.print(f"[{DIM_CYAN}]session closed.[/{DIM_CYAN}]")
+    console.print(f"[{DIM}]session closed.[/{DIM}]")
 
 
 def print_aborted():
@@ -136,13 +136,13 @@ def print_aborted():
 
 
 def print_saved(path: str):
-    console.print(f"[{DIM_CYAN}]saved ->[/{DIM_CYAN}] {path}\n")
+    console.print(f"[{DIM}]saved ->[/{DIM}] {path}\n")
 
 
 def rule(label: str):
     console.print()
-    console.rule(f"[{MAGENTA}]{label}[/{MAGENTA}]", style="bright_magenta")
+    console.rule(f"[{ACCENT}]{label}[/{ACCENT}]", style="bright_green")
 
 
 def prompt(text: str) -> str:
-    return console.input(f"[{CYAN}]{text}[/{CYAN}] ").strip()
+    return console.input(f"[{PRIMARY}]{text}[/{PRIMARY}] ").strip()
