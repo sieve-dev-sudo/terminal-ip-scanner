@@ -14,9 +14,16 @@ machine" problem, which is almost always a terminal-width or encoding
 mismatch rather than a bug in the art itself.
 """
 
-GREEN = "bold green"
-DIM_GREEN = "green"
+# Cyberpunk palette: neon cyan as the primary color, magenta as the accent
+# (used for headings/highlights), red reserved for errors only.
+CYAN = "bold bright_cyan"
+DIM_CYAN = "cyan"
+MAGENTA = "bold bright_magenta"
 RED = "bold red"
+
+# Backward-compatible aliases (in case anything still imports the old names)
+GREEN = CYAN
+DIM_GREEN = DIM_CYAN
 
 TITLE = "TERMINAL-IP-SCANNER"
 TAGLINE = "network geolocation utility // ctrl+c to quit"
