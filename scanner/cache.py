@@ -1,6 +1,6 @@
 """
 Lightweight in-memory cache for lookup results within a single run.
-Not persisted to disk — each new process starts with an empty cache.
+Not persisted to disk, each new process starts with an empty cache.
 Keeps repeated lookups of the same IP (e.g. re-running the same target
 in interactive mode) from hitting the API again.
 """
