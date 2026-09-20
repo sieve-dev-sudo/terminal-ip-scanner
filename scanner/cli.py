@@ -100,7 +100,7 @@ def interactive_menu(*, timeout: float = DEFAULT_TIMEOUT_SECONDS):
 
     while True:
         try:
-            raw = display.prompt("scanner>")
+            raw = display.prompt("scanner-ip-address>")
         except EOFError:
             break
 
