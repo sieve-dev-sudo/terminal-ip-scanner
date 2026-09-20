@@ -1,5 +1,5 @@
 """
-Unit tests for scanner.lookup — the API is mocked, no real network calls.
+Unit tests for scanner.lookup. The API is mocked, no real network calls.
 Run with: pytest
 """
 
