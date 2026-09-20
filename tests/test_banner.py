@@ -1,9 +1,9 @@
 """
-Unit tests for scanner.banner — ensures the banner never exceeds the
+Unit tests for scanner.banner. Ensures the banner never exceeds the
 terminal width and degrades gracefully without Unicode support.
 """
 
-from scanner.banner import BANNER_FULL_WIDTH, banner_for
+from scanner.banner import BANNER_FULL_WIDTH, TITLE, banner_for
 
 
 def _max_line_width(banner: str) -> int:
@@ -13,7 +13,7 @@ def _max_line_width(banner: str) -> int:
 class TestBannerForWidth:
     def test_wide_terminal_gets_full_banner(self):
         banner = banner_for(120, use_unicode=True)
-        assert "S C A N N E R" in banner
+        assert "║" in banner  # separator bar between SCANNER and IP
         assert _max_line_width(banner) < 120
 
     def test_narrow_terminal_never_exceeds_width(self):
@@ -32,4 +32,4 @@ class TestBannerForWidth:
 
     def test_title_present_in_compact_banner(self):
         banner = banner_for(70, use_unicode=True)
-        assert "TERMINAL-IP-SCANNER" in banner
+        assert TITLE in banner
