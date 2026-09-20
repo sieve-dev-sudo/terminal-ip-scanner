@@ -23,26 +23,22 @@ DIM = "green"
 ACCENT = "bold bright_green"
 RED = "bold red"
 
-TITLE = "TERMINAL-IP-SCANNER"
-TAGLINE = "network geolocation utility // ctrl+c to quit"
-CREDIT = "developed by Mr. Siev E"
+TITLE = "SCANNER-IP"
 
-# Full block-letter banner. Widest line is 79 columns, so this should only
-# be shown when the terminal is comfortably wider than that (see
-# banner_for below) — otherwise most terminals will wrap it and the
-# box-drawing characters will look broken. Uses a full-height "║" bar
-# between TERMINAL and IP (instead of a small mid-height hyphen) so the
-# separator is unambiguous at a glance.
+# Full block-letter banner: "SCANNER | IP". Widest line is 74 columns, so
+# this should only be shown when the terminal is comfortably wider than
+# that (see banner_for below), otherwise most terminals will wrap it and
+# the box-drawing characters will look broken. Uses a full-height "|" bar
+# between SCANNER and IP so the separator is unambiguous at a glance.
 BANNER_FULL = r"""
-████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗ █████╗ ██╗      ║ ██╗██████╗
-╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗██║      ║ ██║██╔══██╗
-   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║███████║██║      ║ ██║██████╔╝
-   ██║   ██╔══╝  ██╔══██╗██║╚██╔╝██║██║██║╚██╗██║██╔══██║██║      ║ ██║██╔═══╝
-   ██║   ███████╗██║  ██║██║ ╚═╝ ██║██║██║ ╚████║██║  ██║███████╗ ║ ██║██║
-   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ║ ╚═╝╚═╝
-                                 S C A N N E R
+███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗  ║ ██╗██████╗
+██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗ ║ ██║██╔══██╗
+███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝ ║ ██║██████╔╝
+╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗ ║ ██║██╔═══╝
+███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║ ║ ██║██║
+╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ║ ╚═╝╚═╝
 """
-BANNER_FULL_WIDTH = 80  # widest line, plus a small safety margin
+BANNER_FULL_WIDTH = 76  # widest line, plus a small safety margin
 
 SCAN_STEPS = [
     "initializing trace on {target}...",
@@ -57,7 +53,6 @@ HELP_LINES = [
     ("<enter>", "look up your own public IP"),
     ("<ip>", "look up one IP  (e.g. 8.8.8.8)"),
     ("<ip1> <ip2> ...", "look up several at once"),
-    ("q", "quit"),
 ]
 
 
@@ -65,7 +60,7 @@ def _boxed_banner(width: int, use_unicode: bool) -> str:
     """
     Build a centered, bordered banner at the given width. Generated
     programmatically (not hand-typed) so it is always correctly aligned
-    regardless of width — nothing to accidentally break.
+    regardless of width, nothing to accidentally break.
     """
     inner_width = max(width - 2, len(TITLE) + 2)
 
