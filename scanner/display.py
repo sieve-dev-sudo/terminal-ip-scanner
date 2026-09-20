@@ -17,7 +17,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.box import HEAVY
 
-from .banner import banner_for, TAGLINE, CREDIT, SCAN_STEPS, HELP_LINES, PRIMARY, DIM, ACCENT, RED
+from .banner import banner_for, SCAN_STEPS, HELP_LINES, PRIMARY, DIM, ACCENT, RED
 from .errors import ScannerError
 
 console = Console()
@@ -52,9 +52,6 @@ def print_banner():
         # Last-resort fallback: strip to plain ASCII no matter what.
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
-    console.print(Text(TAGLINE, style=DIM))
-    console.print()
-    console.print(Text(CREDIT, style=ACCENT))
     console.print()
 
 
@@ -119,7 +116,7 @@ def render_result(data: dict):
 
 
 def print_json(data: dict):
-    """Print raw JSON — used with --json flag, no styling, script-friendly."""
+    """Print raw JSON, used with --json flag, no styling, script-friendly."""
     console.print_json(json_module.dumps(data))
 
 
