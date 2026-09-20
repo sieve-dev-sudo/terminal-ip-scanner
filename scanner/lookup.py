@@ -1,6 +1,6 @@
 """
 IP geolocation lookup logic.
-Talks to the ipwho.is API and returns parsed data. Pure data layer —
+Talks to the ipwho.is API and returns parsed data. Pure data layer,
 no printing, no Rich, so it can be unit tested and reused on its own.
 """
 
@@ -47,7 +47,7 @@ def lookup_ip(ip: str = "", timeout: float = DEFAULT_TIMEOUT_SECONDS) -> dict:
     except requests.Timeout as exc:
         raise LookupError(f"request timed out after {timeout}s") from exc
     except requests.ConnectionError as exc:
-        raise LookupError("could not connect — check your internet connection") from exc
+        raise LookupError("could not connect, check your internet connection") from exc
     except requests.HTTPError as exc:
         raise LookupError(f"API returned an error status: {exc}") from exc
     except requests.RequestException as exc:
