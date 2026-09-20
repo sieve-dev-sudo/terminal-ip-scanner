@@ -1,5 +1,5 @@
 """
-Unit tests for scanner.cli — argument parsing and run_targets orchestration.
+Unit tests for scanner.cli. Argument parsing and run_targets orchestration.
 """
 
 from scanner import cache
