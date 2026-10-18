@@ -11,7 +11,7 @@ import shutil
 import sys
 import json as json_module
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
@@ -22,16 +22,21 @@ from .banner import (
     SCAN_STEPS,
     HELP_LINES,
     MENU_OPTIONS,
-    VERSION,
-    ATTRIBUTION,
     PRIMARY,
     DIM,
     ACCENT,
     RED,
+    INFO,
+    WARN,
+    LABEL,
 )
 from .errors import ScannerError
 
-console = Console()
+# Cap the console width so panels, rules, and separators stay a readable
+# size even inside a very wide IDE terminal (e.g. VS Code), instead of
+# stretching edge-to-edge with mostly empty space.
+_TERM_WIDTH = shutil.get_terminal_size(fallback=(80, 24)).columns
+console = Console(width=min(_TERM_WIDTH, 78))
 
 
 def _terminal_supports_unicode() -> bool:
@@ -52,8 +57,6 @@ def print_banner():
     never wraps or renders as garbled characters -- the two ways an ASCII
     banner typically "breaks" after a fresh `git clone` on a new machine
     (e.g. an 80-column default terminal on Kali, or a non-UTF-8 SSH session).
-    Followed by a version line and a creator attribution line, styled like
-    a classic terminal security-tool banner.
     """
     width = shutil.get_terminal_size(fallback=(80, 24)).columns
     use_unicode = _terminal_supports_unicode()
@@ -65,9 +68,6 @@ def print_banner():
         # Last-resort fallback: strip to plain ASCII no matter what.
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
-    console.print(Text(f"Version : {VERSION}", style=RED))
-    console.print()
-    console.print(f"[{DIM}][-][/{DIM}] {ATTRIBUTION}")
     console.print()
 
 
@@ -98,6 +98,11 @@ def fake_scan_lines(target: str, animate: bool = True):
 
 
 def render_result(data: dict):
+    """
+    Render a lookup result as a compact, sectioned panel: a LOCATION block
+    (cyan) and a NETWORK block (yellow), inside a green-bordered box sized
+    to its content rather than stretched to the terminal's full width.
+    """
     ip = data.get("ip", "?")
     city = data.get("city") or "UNKNOWN"
     region = data.get("region") or "-"
@@ -112,28 +117,42 @@ def render_result(data: dict):
     org = conn.get("org") or "-"
     asn = conn.get("asn") or "-"
 
-    table = Table(show_header=False, box=None, padding=(0, 1))
-    table.add_column(style=ACCENT, justify="right")
-    table.add_column(style=PRIMARY)
+    def section_table(accent: str) -> Table:
+        t = Table(show_header=False, box=None, padding=(0, 1))
+        t.add_column(style=LABEL, justify="right")
+        t.add_column(style=accent)
+        return t
 
-    table.add_row("TARGET IP", ip)
-    table.add_row("CITY", city)
-    table.add_row("REGION", region)
-    table.add_row("COUNTRY", f"{country} [{cc}]")
-    table.add_row("POSTAL", str(postal))
-    table.add_row("COORDS", f"{lat:.4f}, {lon:.4f}" if lat and lon else "-")
-    table.add_row("TIMEZONE", tz)
-    table.add_row("ISP", isp)
-    table.add_row("ORG", org)
-    table.add_row("ASN", str(asn))
+    location = section_table(INFO)
+    location.add_row("TARGET IP", ip)
+    location.add_row("CITY", city)
+    location.add_row("REGION", region)
+    location.add_row("COUNTRY", f"{country} [{cc}]")
+    location.add_row("POSTAL", str(postal))
+    location.add_row("COORDS", f"{lat:.4f}, {lon:.4f}" if lat and lon else "-")
+    location.add_row("TIMEZONE", tz)
+
+    network = section_table(WARN)
+    network.add_row("ISP", isp)
+    network.add_row("ORG", org)
+    network.add_row("ASN", str(asn))
+
+    body = Group(
+        Text(" LOCATION", style=INFO),
+        location,
+        Text(""),
+        Text(" NETWORK", style=WARN),
+        network,
+    )
 
     console.print(
         Panel(
-            table,
+            body,
             title=f"[{ACCENT}]TARGET ACQUIRED[/{ACCENT}]",
-            subtitle=f"[{DIM}]accuracy: city/ISP-level, not exact address[/{DIM}]",
+            subtitle=f"[{DIM}]city/ISP-level accuracy[/{DIM}]",
             border_style="bright_green",
             box=HEAVY,
+            expand=False,
         )
     )
 
