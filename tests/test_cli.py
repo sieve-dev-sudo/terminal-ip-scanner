@@ -3,7 +3,7 @@ Unit tests for scanner.cli. Argument parsing and run_targets orchestration.
 """
 
 from scanner import cache
-from scanner.cli import build_parser, run_targets
+from scanner.cli import build_parser, interactive_menu, run_targets
 
 
 def setup_function():
@@ -59,3 +59,35 @@ class TestRunTargets:
 
         results = run_targets(["not-an-ip"], animate=False)
         assert results == []
+
+
+class TestInteractiveMenu:
+    def test_option_00_exits_immediately(self, mocker):
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", return_value="00")
+        mock_closed = mocker.patch("scanner.display.print_session_closed")
+
+        interactive_menu()
+        mock_closed.assert_called_once()
+
+    def test_option_01_looks_up_self(self, mocker):
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", side_effect=["01", "00"])
+        mocker.patch("scanner.display.print_session_closed")
+        mock_run = mocker.patch("scanner.cli.run_targets", return_value=[])
+
+        interactive_menu()
+        mock_run.assert_any_call([""], timeout=mocker.ANY)
+
+    def test_invalid_choice_shows_error_and_continues(self, mocker):
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", side_effect=["99", "00"])
+        mocker.patch("scanner.display.print_session_closed")
+        mock_invalid = mocker.patch("scanner.display.print_invalid_choice")
+
+        interactive_menu()
+        mock_invalid.assert_called_once_with("99")
+        
