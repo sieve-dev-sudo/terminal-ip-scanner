@@ -80,12 +80,13 @@ def print_help():
 
 def print_menu():
     """Bordered, numbered option menu in the style of classic terminal
-    security tools: '[01] Label' entries, bracket-colored distinctly from
-    the label text."""
+    security tools: '[01] Label' entries, each number colored with its
+    own accent (hacker-style per-section coloring) rather than one flat
+    color for the whole list."""
     console.print(f"[{DIM}][::][/{DIM}] [{ACCENT}]Select an option[/{ACCENT}] [{DIM}][::][/{DIM}]")
     console.print()
-    for number, label in MENU_OPTIONS:
-        console.print(f"[{DIM}][[/{DIM}][{PRIMARY}]{number}[/{PRIMARY}][{DIM}]][/{DIM}] {label}")
+    for number, label, color in MENU_OPTIONS:
+        console.print(f"[{DIM}][[/{DIM}][{color}]{number}[/{color}][{DIM}]][/{DIM}] {label}")
     console.print()
 
 
