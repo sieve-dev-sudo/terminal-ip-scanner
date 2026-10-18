@@ -1,6 +1,6 @@
 """
 Terminal rendering for terminal-ip-scanner.
-All Rich-based output (banner, scan animation, result panels) lives here.
+All Rich-based output (banner, scan animation, result panels, menu) lives here.
 """
 
 from __future__ import annotations
@@ -17,7 +17,18 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.box import HEAVY
 
-from .banner import banner_for, SCAN_STEPS, HELP_LINES, PRIMARY, DIM, ACCENT, RED
+from .banner import (
+    banner_for,
+    SCAN_STEPS,
+    HELP_LINES,
+    MENU_OPTIONS,
+    VERSION,
+    ATTRIBUTION,
+    PRIMARY,
+    DIM,
+    ACCENT,
+    RED,
+)
 from .errors import ScannerError
 
 console = Console()
@@ -41,6 +52,8 @@ def print_banner():
     never wraps or renders as garbled characters -- the two ways an ASCII
     banner typically "breaks" after a fresh `git clone` on a new machine
     (e.g. an 80-column default terminal on Kali, or a non-UTF-8 SSH session).
+    Followed by a version line and a creator attribution line, styled like
+    a classic terminal security-tool banner.
     """
     width = shutil.get_terminal_size(fallback=(80, 24)).columns
     use_unicode = _terminal_supports_unicode()
@@ -52,6 +65,9 @@ def print_banner():
         # Last-resort fallback: strip to plain ASCII no matter what.
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
 
+    console.print(Text(f"Version : {VERSION}", style=RED))
+    console.print()
+    console.print(f"[{DIM}][-][/{DIM}] {ATTRIBUTION}")
     console.print()
 
 
@@ -59,6 +75,17 @@ def print_help():
     console.print(f"[{ACCENT}]commands:[/{ACCENT}]")
     for cmd, desc in HELP_LINES:
         console.print(f"  [{PRIMARY}]{cmd:<16}[/{PRIMARY}] {desc}")
+    console.print()
+
+
+def print_menu():
+    """Bordered, numbered option menu in the style of classic terminal
+    security tools: '[01] Label' entries, bracket-colored distinctly from
+    the label text."""
+    console.print(f"[{DIM}][::][/{DIM}] [{ACCENT}]Select an option[/{ACCENT}] [{DIM}][::][/{DIM}]")
+    console.print()
+    for number, label in MENU_OPTIONS:
+        console.print(f"[{DIM}][[/{DIM}][{PRIMARY}]{number}[/{PRIMARY}][{DIM}]][/{DIM}] {label}")
     console.print()
 
 
@@ -136,10 +163,14 @@ def print_saved(path: str):
     console.print(f"[{DIM}]saved ->[/{DIM}] {path}\n")
 
 
+def print_invalid_choice(choice: str):
+    console.print(f"[{RED}]ERROR:[/{RED}] '{choice}' is not a valid option\n")
+
+
 def rule(label: str):
     console.print()
     console.rule(f"[{ACCENT}]{label}[/{ACCENT}]", style="bright_green")
 
 
 def prompt(text: str) -> str:
-    return console.input(f"[{PRIMARY}]{text}[/{PRIMARY}] ").strip()
+    return console.input(f"[{DIM}][-][/{DIM}] [{ACCENT}]{text}[/{ACCENT}] : ").strip()
