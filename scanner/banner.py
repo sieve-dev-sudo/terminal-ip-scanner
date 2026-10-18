@@ -29,6 +29,7 @@ RED = "bold red"
 # Result-panel-only accents (location vs network sections, value vs label).
 INFO = "bold bright_cyan"       # location section header + values
 WARN = "bold bright_yellow"     # network section header + values
+MAGENTA = "bold bright_magenta"  # extra accent, used for one menu item
 LABEL = "bright_black"          # dim field labels, left column
 
 TITLE = "SCANNER-IP"
@@ -66,13 +67,15 @@ HELP_LINES = [
 ]
 
 # Numbered menu, styled after the bordered "[01] Label" hacker-tool look.
-# (number, label) pairs; "00" is reserved for exit by convention.
+# Each entry is (number, label, color) so every bracketed number gets its
+# own accent instead of one flat color block, "00" (exit) is red by
+# convention to read as the "stop" action.
 MENU_OPTIONS = [
-    ("01", "Look up my own IP"),
-    ("02", "Look up a specific IP"),
-    ("03", "Look up several IPs at once"),
-    ("04", "Save last result to JSON file"),
-    ("00", "Exit"),
+    ("01", "Look up my own IP", PRIMARY),
+    ("02", "Look up a specific IP", INFO),
+    ("03", "Look up several IPs at once", WARN),
+    ("04", "Save last result to JSON file", MAGENTA),
+    ("00", "Exit", RED),
 ]
 
 
