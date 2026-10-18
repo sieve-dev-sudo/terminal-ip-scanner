@@ -15,14 +15,21 @@ machine" problem, which is almost always a terminal-width or encoding
 mismatch rather than a bug in the art itself.
 """
 
-# Neon Green palette: bright neon green as the primary color everywhere,
-# a dimmer green for secondary/subtitle text, red reserved for errors only.
-# Named semantically (not by literal color) so the palette can be swapped
-# again later without renaming every call site.
+# Neon Green palette: bright neon green stays the primary color for the
+# banner, menu, and prompts. A few extra accents are mixed into the result
+# panel only, so it reads as sectioned data rather than one flat color
+# block, red reserved for errors only. Named semantically (not by literal
+# color) so the palette can be swapped again later without renaming every
+# call site.
 PRIMARY = "bold bright_green"
 DIM = "green"
 ACCENT = "bold bright_green"
 RED = "bold red"
+
+# Result-panel-only accents (location vs network sections, value vs label).
+INFO = "bold bright_cyan"       # location section header + values
+WARN = "bold bright_yellow"     # network section header + values
+LABEL = "bright_black"          # dim field labels, left column
 
 TITLE = "SCANNER-IP"
 VERSION = "1.0.0"
