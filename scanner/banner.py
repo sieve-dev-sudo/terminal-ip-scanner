@@ -1,7 +1,8 @@
 """
-ASCII banner and color constants for terminal-ip-scanner.
+ASCII banner, version/attribution lines, and color constants for
+terminal-ip-scanner.
 
-The banner adapts to the terminal it's running in:
+The block-letter banner adapts to the terminal it's running in:
   - wide, UTF-8 terminals get the full block-letter ASCII art
   - narrower terminals (e.g. a default 80-column Kali/tmux session) get a
     smaller boxed banner that is guaranteed to fit and stay aligned
@@ -24,6 +25,8 @@ ACCENT = "bold bright_green"
 RED = "bold red"
 
 TITLE = "SCANNER-IP"
+VERSION = "1.0.0"
+ATTRIBUTION = "Tool Created by Mr. Siev E"
 
 # Full block-letter banner: "SCANNER | IP". Widest line is 74 columns, so
 # this should only be shown when the terminal is comfortably wider than
@@ -53,6 +56,16 @@ HELP_LINES = [
     ("<enter>", "look up your own public IP"),
     ("<ip>", "look up one IP  (e.g. 8.8.8.8)"),
     ("<ip1> <ip2> ...", "look up several at once"),
+]
+
+# Numbered menu, styled after the bordered "[01] Label" hacker-tool look.
+# (number, label) pairs; "00" is reserved for exit by convention.
+MENU_OPTIONS = [
+    ("01", "Look up my own IP"),
+    ("02", "Look up a specific IP"),
+    ("03", "Look up several IPs at once"),
+    ("04", "Save last result to JSON file"),
+    ("00", "Exit"),
 ]
 
 
