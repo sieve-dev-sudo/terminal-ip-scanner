@@ -23,7 +23,7 @@ def build_parser() -> argparse.ArgumentParser:
         "ips",
         nargs="*",
         help="one or more IP addresses to look up (omit to look up your own IP, "
-        "or omit entirely to enter interactive mode)",
+        "or omit entirely to enter interactive menu mode)",
     )
     parser.add_argument(
         "--json",
@@ -94,22 +94,56 @@ def run_targets(
 
 
 def interactive_menu(*, timeout: float = DEFAULT_TIMEOUT_SECONDS):
-    """Menu loop for easy, no-flags-required usage."""
+    """Numbered-menu loop for easy, no-flags-required usage."""
     display.print_banner()
-    display.print_help()
+
+    last_results: list[dict] = []
 
     while True:
+        display.print_menu()
         try:
-            raw = display.prompt("scanner-ip-address>")
+            choice = display.prompt("Select an option")
         except EOFError:
             break
 
-        if raw.lower() in ("q", "quit", "exit"):
+        if choice == "00" or choice.lower() in ("q", "quit", "exit"):
             display.print_session_closed()
             break
 
-        targets = raw.split() if raw else [""]
-        run_targets(targets, timeout=timeout)
+        elif choice == "01":
+            last_results = run_targets([""], timeout=timeout) or last_results
+
+        elif choice == "02":
+            try:
+                ip = display.prompt("Enter an IP address")
+            except EOFError:
+                break
+            last_results = run_targets([ip], timeout=timeout) or last_results
+
+        elif choice == "03":
+            try:
+                raw = display.prompt("Enter IPs separated by spaces")
+            except EOFError:
+                break
+            targets = raw.split()
+            if targets:
+                last_results = run_targets(targets, timeout=timeout) or last_results
+
+        elif choice == "04":
+            if not last_results:
+                display.print_error(ScannerError("no results yet, look up an IP first"))
+                continue
+            try:
+                path = display.prompt("Save as (filename)")
+            except EOFError:
+                break
+            if path:
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(last_results, f, indent=2)
+                display.print_saved(path)
+
+        else:
+            display.print_invalid_choice(choice)
 
 
 def main(argv: list[str] | None = None):
@@ -117,7 +151,7 @@ def main(argv: list[str] | None = None):
     args = parser.parse_args(argv)
 
     # IPs passed as CLI args -> run once and exit (scriptable mode).
-    # No args at all -> interactive menu (easy mode).
+    # No args at all -> interactive numbered menu (easy mode).
     if args.ips:
         if not args.json:
             display.print_banner()
@@ -142,3 +176,4 @@ def entrypoint():
 
 if __name__ == "__main__":
     entrypoint()
+    
