@@ -1,14 +1,14 @@
 """
-ASCII banner, version/attribution lines, and color constants for
-terminal-ip-scanner.
+ASCII banner and color constants for terminal-ip-scanner.
 
-The block-letter banner adapts to the terminal it's running in:
-  - wide, UTF-8 terminals get the full block-letter ASCII art
+The banner adapts to the terminal it's running in:
+  - wide terminals get the full thin-outline ASCII art (plain ASCII only,
+    so it renders identically everywhere, no Unicode box-drawing needed)
   - narrower terminals (e.g. a default 80-column Kali/tmux session) get a
     smaller boxed banner that is guaranteed to fit and stay aligned
   - terminals/locales that can't render Unicode box-drawing characters
     (rare, but happens over some SSH sessions with a non-UTF-8 LANG) get
-    a plain ASCII fallback with no special characters at all
+    a plain ASCII fallback for that smaller box too
 
 This avoids the classic "banner looks broken after git clone on a fresh
 machine" problem, which is almost always a terminal-width or encoding
@@ -33,23 +33,20 @@ MAGENTA = "bold bright_magenta"  # extra accent, used for one menu item
 LABEL = "bright_black"          # dim field labels, left column
 
 TITLE = "SCANNER-IP"
-VERSION = "1.0.0"
-ATTRIBUTION = "Tool Created by Mr. Siev E"
 
-# Full block-letter banner: "SCANNER | IP". Widest line is 74 columns, so
-# this should only be shown when the terminal is comfortably wider than
-# that (see banner_for below), otherwise most terminals will wrap it and
-# the box-drawing characters will look broken. Uses a full-height "|" bar
-# between SCANNER and IP so the separator is unambiguous at a glance.
+# Full banner: "SCANNER | IP" in a thin outline style (classic terminal
+# security-tool look). Built entirely from plain ASCII (",", "-", ".",
+# "|", "'", backtick), so, unlike a Unicode block-letter font, it renders
+# identically on every terminal and encoding, no fallback needed for it.
+# Widest line is 50 columns, comfortably inside even an 80-column default
+# terminal, so this is shown far more often than the old wide block art.
 BANNER_FULL = r"""
-███████╗ ██████╗ █████╗ ███╗   ██╗███╗   ██╗███████╗██████╗  ║ ██╗██████╗
-██╔════╝██╔════╝██╔══██╗████╗  ██║████╗  ██║██╔════╝██╔══██╗ ║ ██║██╔══██╗
-███████╗██║     ███████║██╔██╗ ██║██╔██╗ ██║█████╗  ██████╔╝ ║ ██║██████╔╝
-╚════██║██║     ██╔══██║██║╚██╗██║██║╚██╗██║██╔══╝  ██╔══██╗ ║ ██║██╔═══╝
-███████║╚██████╗██║  ██║██║ ╚████║██║ ╚████║███████╗██║  ██║ ║ ██║██║
-╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ║ ╚═╝╚═╝
+,---.,---.,---.,   .,   .,---.,---.    |    |,---.
+`---.|    |---||\  ||\  ||--- |---'    |    ||---'
+    ||    |   || \ || \ ||    |  \     |    ||    
+`---'`---'`   '`  `'`  `'`---'`   `    |    ``    
 """
-BANNER_FULL_WIDTH = 76  # widest line, plus a small safety margin
+BANNER_FULL_WIDTH = 52  # widest line, plus a small safety margin
 
 SCAN_STEPS = [
     "initializing trace on {target}...",
@@ -101,11 +98,11 @@ def _boxed_banner(width: int, use_unicode: bool) -> str:
 
 def banner_for(width: int, use_unicode: bool = True) -> str:
     """
-    Pick the right banner variant for the given terminal width (columns)
-    and Unicode support. Falls back gracefully rather than ever printing
-    something wider than the terminal or something the terminal can't
-    render.
+    Pick the right banner variant for the given terminal width (columns).
+    BANNER_FULL is plain ASCII, so it only depends on width, not Unicode
+    support; the compact boxed fallback (for narrower terminals) still
+    respects use_unicode so its border characters never break either.
     """
-    if use_unicode and width >= BANNER_FULL_WIDTH:
+    if width >= BANNER_FULL_WIDTH:
         return BANNER_FULL
     return _boxed_banner(min(width, 70), use_unicode=use_unicode)
