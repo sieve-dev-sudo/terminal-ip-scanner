@@ -3,7 +3,7 @@ Unit tests for scanner.cli. Argument parsing and run_targets orchestration.
 """
 
 from scanner import cache
-from scanner.cli import build_parser, interactive_menu, run_targets
+from scanner.cli import build_parser, interactive_menu, normalize_choice, run_targets
 
 
 def setup_function():
@@ -61,7 +61,43 @@ class TestRunTargets:
         assert results == []
 
 
+class TestNormalizeChoice:
+    def test_single_digit_gets_zero_padded(self):
+        assert normalize_choice("1") == "01"
+        assert normalize_choice("2") == "02"
+
+    def test_already_two_digit_unchanged(self):
+        assert normalize_choice("01") == "01"
+        assert normalize_choice("04") == "04"
+
+    def test_extra_leading_zeros_collapse(self):
+        assert normalize_choice("001") == "01"
+        assert normalize_choice("0004") == "04"
+
+    def test_lone_zero_becomes_exit_code(self):
+        assert normalize_choice("0") == "00"
+
+    def test_whitespace_is_stripped(self):
+        assert normalize_choice("  2  ") == "02"
+
+    def test_non_numeric_passes_through_unchanged(self):
+        assert normalize_choice("q") == "q"
+        assert normalize_choice("quit") == "quit"
+
+
 class TestInteractiveMenu:
+    def test_flexible_numeric_input_matches_option_01(self, mocker):
+        """"1", not just "01", should trigger the same self-lookup option."""
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", side_effect=["1", "00"])
+        mocker.patch("scanner.display.print_session_closed")
+        mock_run = mocker.patch("scanner.cli.run_targets", return_value=[])
+
+        interactive_menu()
+        mock_run.assert_any_call([""], timeout=mocker.ANY)
+
+
     def test_option_00_exits_immediately(self, mocker):
         mocker.patch("scanner.display.print_banner")
         mocker.patch("scanner.display.print_menu")
@@ -90,4 +126,3 @@ class TestInteractiveMenu:
 
         interactive_menu()
         mock_invalid.assert_called_once_with("99")
-        
