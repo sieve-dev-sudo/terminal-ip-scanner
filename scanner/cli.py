@@ -49,6 +49,19 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def normalize_choice(raw: str) -> str:
+    """
+    Normalize a menu choice so "1", "01", and "001" are all treated the
+    same as "01" (and likewise for every other option). Falls back to the
+    original trimmed string unchanged if it isn't a plain number, so
+    things like "q" still reach the quit check as-is.
+    """
+    stripped = raw.strip()
+    if stripped.isdigit():
+        return f"{int(stripped):02d}"
+    return stripped
+
+
 def run_targets(
     targets: list[str],
     *,
@@ -102,9 +115,11 @@ def interactive_menu(*, timeout: float = DEFAULT_TIMEOUT_SECONDS):
     while True:
         display.print_menu()
         try:
-            choice = display.prompt("Select an option")
+            raw_choice = display.prompt("Select an option")
         except EOFError:
             break
+
+        choice = normalize_choice(raw_choice)
 
         if choice == "00" or choice.lower() in ("q", "quit", "exit"):
             display.print_session_closed()
@@ -143,7 +158,7 @@ def interactive_menu(*, timeout: float = DEFAULT_TIMEOUT_SECONDS):
                 display.print_saved(path)
 
         else:
-            display.print_invalid_choice(choice)
+            display.print_invalid_choice(raw_choice)
 
 
 def main(argv: list[str] | None = None):
@@ -176,4 +191,3 @@ def entrypoint():
 
 if __name__ == "__main__":
     entrypoint()
-    
