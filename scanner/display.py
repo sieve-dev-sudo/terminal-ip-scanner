@@ -29,6 +29,7 @@ from .banner import (
     INFO,
     WARN,
     LABEL,
+    BANNER_COLOR,
 )
 from .errors import ScannerError
 
@@ -63,7 +64,7 @@ def print_banner():
     banner = banner_for(width, use_unicode=use_unicode)
 
     try:
-        console.print(f"[{PRIMARY}]{banner}[/{PRIMARY}]")
+        console.print(f"[{BANNER_COLOR}]{banner}[/{BANNER_COLOR}]")
     except UnicodeEncodeError:
         # Last-resort fallback: strip to plain ASCII no matter what.
         console.print(banner_for(width, use_unicode=False).encode("ascii", "replace").decode())
