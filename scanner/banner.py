@@ -15,16 +15,18 @@ machine" problem, which is almost always a terminal-width or encoding
 mismatch rather than a bug in the art itself.
 """
 
-# Neon Green palette: bright neon green stays the primary color for the
-# banner, menu, and prompts. A few extra accents are mixed into the result
-# panel only, so it reads as sectioned data rather than one flat color
-# block, red reserved for errors only. Named semantically (not by literal
-# color) so the palette can be swapped again later without renaming every
-# call site.
+# Neon Green palette for the menu/prompts, with the banner itself in
+# amber/orange (matching the classic terminal security-tool look where
+# the title art is orange and everything below it is green). A few extra
+# accents are mixed into the result panel only, so it reads as sectioned
+# data rather than one flat color block, red reserved for errors only.
+# Named semantically (not by literal color) so the palette can be swapped
+# again later without renaming every call site.
 PRIMARY = "bold bright_green"
 DIM = "green"
 ACCENT = "bold bright_green"
 RED = "bold red"
+BANNER_COLOR = "bold orange3"
 
 # Result-panel-only accents (location vs network sections, value vs label).
 INFO = "bold bright_cyan"       # location section header + values
@@ -32,21 +34,22 @@ WARN = "bold bright_yellow"     # network section header + values
 MAGENTA = "bold bright_magenta"  # extra accent, used for one menu item
 LABEL = "bright_black"          # dim field labels, left column
 
-TITLE = "SCANNER-IP"
+TITLE = "ScannerIP"
 
-# Full banner: "SCANNER | IP" in a thin outline style (classic terminal
-# security-tool look). Built entirely from plain ASCII (",", "-", ".",
-# "|", "'", backtick), so, unlike a Unicode block-letter font, it renders
-# identically on every terminal and encoding, no fallback needed for it.
-# Widest line is 50 columns, comfortably inside even an 80-column default
-# terminal, so this is shown far more often than the old wide block art.
+# Full banner: "ScannerIP" as one word, in a thin outline style (classic
+# terminal security-tool look). Built entirely from plain ASCII (",",
+# "-", ".", "|", "'", backtick), so, unlike a Unicode block-letter font,
+# it renders identically on every terminal and encoding, no fallback
+# needed for it. Widest line is 41 columns, comfortably inside even an
+# 80-column default terminal, so this is shown far more often than the
+# old wide block art.
 BANNER_FULL = r"""
-,---.,---.,---.,   .,   .,---.,---.    |    |,---.
-`---.|    |---||\  ||\  ||--- |---'    |    ||---'
-    ||    |   || \ || \ ||    |  \     |    ||    
-`---'`---'`   '`  `'`  `'`---'`   `    |    ``    
+,---.                              |,---.
+`---.,---.,---.,---.,---.,---.,---.||---'
+    ||    ,---||   ||   ||---'|    ||    
+`---'`---'`---^`   '`   '`---'`    ``    
 """
-BANNER_FULL_WIDTH = 52  # widest line, plus a small safety margin
+BANNER_FULL_WIDTH = 43  # widest line, plus a small safety margin
 
 SCAN_STEPS = [
     "initializing trace on {target}...",
