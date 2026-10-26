@@ -13,7 +13,7 @@ def _max_line_width(banner: str) -> int:
 class TestBannerForWidth:
     def test_wide_terminal_gets_full_banner(self):
         banner = banner_for(120, use_unicode=True)
-        assert "|" in banner  # separator bar between SCANNER and IP
+        assert banner == BANNER_FULL
         assert _max_line_width(banner) < 120
 
     def test_narrow_terminal_never_exceeds_width(self):
@@ -24,6 +24,7 @@ class TestBannerForWidth:
     def test_below_full_banner_threshold_uses_compact(self):
         banner = banner_for(BANNER_FULL_WIDTH - 1, use_unicode=True)
         assert _max_line_width(banner) <= BANNER_FULL_WIDTH - 1
+        assert banner != BANNER_FULL
 
     def test_no_unicode_support_uses_ascii_only_chars(self):
         banner = banner_for(80, use_unicode=False)
@@ -34,14 +35,9 @@ class TestBannerForWidth:
         banner = banner_for(BANNER_FULL_WIDTH - 10, use_unicode=True)
         assert TITLE in banner
 
-    def test_full_banner_is_pure_ascii(self):
-        # BANNER_FULL uses a thin outline style built only from plain
-        # ASCII characters, so it needs no Unicode fallback at all.
-        BANNER_FULL.encode("ascii")
-
-    def test_wide_terminal_gets_full_banner_even_without_unicode(self):
-        # Unlike the old block-letter art, BANNER_FULL doesn't depend on
-        # Unicode support, so use_unicode=False should not downgrade it
-        # once the terminal is wide enough.
+    def test_wide_terminal_without_unicode_falls_back_to_compact(self):
+        # BANNER_FULL uses Unicode box-drawing characters, so even a wide
+        # terminal should not get it when Unicode isn't supported.
         banner = banner_for(120, use_unicode=False)
-        assert banner == BANNER_FULL
+        assert banner != BANNER_FULL
+        banner.encode("ascii")
