@@ -12,6 +12,7 @@ import sys
 import json as json_module
 
 from rich.console import Console, Group
+from rich.control import Control
 from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
@@ -22,6 +23,7 @@ from .banner import (
     SCAN_STEPS,
     HELP_LINES,
     MENU_OPTIONS,
+    MENU_PROMPT_LABEL,
     PRIMARY,
     DIM,
     ACCENT,
@@ -81,13 +83,14 @@ def print_help():
 
 def print_menu():
     """Bordered, numbered option menu in the style of classic terminal
-    security tools: '[01] Label' entries, each number colored with its
-    own accent (hacker-style per-section coloring) rather than one flat
-    color for the whole list."""
-    console.print(f"[{DIM}][::][/{DIM}] [{ACCENT}]Select an option[/{ACCENT}] [{DIM}][::][/{DIM}]")
+    security tools: '[01] Label' entries. Every bracketed marker (the
+    "[::]" header and each "[01]"-style number) uses the same bright
+    yellow accent, bracket characters included, for one consistent,
+    legible color across the whole menu."""
+    console.print(f"[{WARN}][::][/{WARN}] [{ACCENT}]Select an option[/{ACCENT}] [{WARN}][::][/{WARN}]")
     console.print()
     for number, label, color in MENU_OPTIONS:
-        console.print(f"[{DIM}][[/{DIM}][{color}]{number}[/{color}][{DIM}]][/{DIM}] {label}")
+        console.print(f"[{color}][{number}][/{color}] {label}")
     console.print()
 
 
@@ -163,6 +166,41 @@ def render_result(data: dict):
         console.print(f"[{DIM}]  map ->[/{DIM}] {maps_url}\n")
 
 
+def print_history(history: list[dict]):
+    """
+    List every lookup done so far this session as a compact numbered
+    table: index, IP, city, country. Shows a friendly message instead of
+    an empty table when nothing has been looked up yet.
+    """
+    if not history:
+        console.print(f"[{DIM}]no lookups yet, this session's history is empty[/{DIM}]\n")
+        return
+
+    table = Table(show_header=True, box=None, padding=(0, 1))
+    table.add_column("#", style=LABEL, justify="right")
+    table.add_column("IP", style=ACCENT)
+    table.add_column("CITY", style=INFO)
+    table.add_column("COUNTRY", style=WARN)
+
+    for i, data in enumerate(history, start=1):
+        ip = data.get("ip", "?")
+        city = data.get("city") or "UNKNOWN"
+        country = data.get("country") or "UNKNOWN"
+        table.add_row(str(i), ip, city, country)
+
+    console.print(
+        Panel(
+            table,
+            title=f"[{ACCENT}]SESSION HISTORY[/{ACCENT}]",
+            subtitle=f"[{DIM}]{len(history)} lookup(s) this session[/{DIM}]",
+            border_style="bright_green",
+            box=HEAVY,
+            expand=False,
+        )
+    )
+    console.print()
+
+
 def print_json(data: dict):
     """Print raw JSON, used with --json flag, no styling, script-friendly."""
     console.print_json(json_module.dumps(data))
@@ -176,8 +214,33 @@ def print_session_closed():
     console.print(f"[{DIM}]session closed.[/{DIM}]")
 
 
-def print_aborted():
-    console.print(f"\n[{RED}]aborted by user[/{RED}]")
+def _visible_prompt_width(label: str) -> int:
+    """Visible character width of the prompt() line for `label`, ignoring
+    Rich markup, matching exactly what the terminal echoes after it."""
+    return len(f"[-] {label} : ")
+
+
+def print_session_closed_inline(raw_choice: str, label: str = MENU_PROMPT_LABEL):
+    """
+    Print 'session closed.' continuing on the same visible line the user
+    just typed their choice on, matching how it looks after Ctrl+C (no
+    jump to a blank new line first). The terminal itself echoes the
+    Enter keypress as a newline before this program ever sees the typed
+    string, which isn't something Python can suppress, so to land back
+    on that line, the cursor is moved up one row and forward past what
+    was typed, using Rich's own cursor-control codes (translated
+    correctly for the current terminal, legacy Windows consoles
+    included). Falls back to a plain new-line print when stdout isn't an
+    interactive terminal (redirected to a file/pipe), where cursor
+    movement wouldn't mean anything anyway.
+    """
+    if not console.is_terminal:
+        print_session_closed()
+        return
+
+    offset = _visible_prompt_width(label) + len(raw_choice)
+    console.control(Control.move(x=offset, y=-1))
+    console.print(f"[{DIM}] session closed.[/{DIM}]")
 
 
 def print_saved(path: str):
