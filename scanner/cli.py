@@ -10,6 +10,7 @@ import json
 import sys
 
 from . import cache, display
+from .banner import MENU_PROMPT_LABEL
 from .errors import ScannerError
 from .lookup import DEFAULT_TIMEOUT_SECONDS, lookup_ip
 
@@ -106,56 +107,56 @@ def run_targets(
     return results
 
 
+def _close_session(raw_choice: str | None = None):
+    """Shared exit routine: both choosing '00' (or '0', '000', 'q', ...)
+    in the menu and pressing Ctrl+C go through this exact same call, so
+    the message is identical either way. When raw_choice is given (the
+    menu path), the message is merged onto the same line the user just
+    typed on, same as it already looks after Ctrl+C (which never passes
+    raw_choice, since there's nothing typed to merge onto)."""
+    if raw_choice is not None:
+        display.print_session_closed_inline(raw_choice, label=MENU_PROMPT_LABEL)
+    else:
+        display.print_session_closed()
+
+
 def interactive_menu(*, timeout: float = DEFAULT_TIMEOUT_SECONDS):
     """Numbered-menu loop for easy, no-flags-required usage."""
     display.print_banner()
 
-    last_results: list[dict] = []
+    history: list[dict] = []
 
     while True:
         display.print_menu()
         try:
-            raw_choice = display.prompt("Select an option")
+            raw_choice = display.prompt(MENU_PROMPT_LABEL)
         except EOFError:
             break
 
         choice = normalize_choice(raw_choice)
 
         if choice == "00" or choice.lower() in ("q", "quit", "exit"):
-            display.print_session_closed()
+            _close_session(raw_choice)
             break
 
         elif choice == "01":
-            last_results = run_targets([""], timeout=timeout) or last_results
-
-        elif choice == "02":
             try:
                 ip = display.prompt("Enter an IP address")
             except EOFError:
                 break
-            last_results = run_targets([ip], timeout=timeout) or last_results
+            history.extend(run_targets([ip], timeout=timeout))
 
-        elif choice == "03":
+        elif choice == "02":
             try:
                 raw = display.prompt("Enter IPs separated by spaces")
             except EOFError:
                 break
             targets = raw.split()
             if targets:
-                last_results = run_targets(targets, timeout=timeout) or last_results
+                history.extend(run_targets(targets, timeout=timeout))
 
-        elif choice == "04":
-            if not last_results:
-                display.print_error(ScannerError("no results yet, look up an IP first"))
-                continue
-            try:
-                path = display.prompt("Save as (filename)")
-            except EOFError:
-                break
-            if path:
-                with open(path, "w", encoding="utf-8") as f:
-                    json.dump(last_results, f, indent=2)
-                display.print_saved(path)
+        elif choice == "03":
+            display.print_history(history)
 
         else:
             display.print_invalid_choice(raw_choice)
@@ -185,7 +186,7 @@ def entrypoint():
     try:
         main()
     except KeyboardInterrupt:
-        display.print_aborted()
+        _close_session()
         sys.exit(130)
 
 
