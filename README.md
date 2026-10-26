@@ -1,35 +1,38 @@
 <div align="center">
 
-# Demo : Terminal IP Scanner
-
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Rich](https://img.shields.io/badge/Rich-CLI-4B8BBE?style=for-the-badge&logo=windowsterminal&logoColor=white)
-![Requests](https://img.shields.io/badge/Requests-API-green?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-brightgreen?style=for-the-badge)
-
-**developed by Mr. Siev E**
+# Terminal-Ip-Scanner : Hacker-Style Tool
 
 </div>
+
+## 🛠️ Tech Stack
+
+**ភាសាសរសេរកូដ និង ឧបករណ៍**
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Rich](https://img.shields.io/badge/Rich-4B8BBE?style=flat&logo=windowsterminal&logoColor=white)
+![Requests](https://img.shields.io/badge/Requests-HTTP-green?style=flat)
+![Pytest](https://img.shields.io/badge/Pytest-0A9EDC?style=flat&logo=pytest&logoColor=white)
+![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?style=flat&logo=visualstudiocode&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat&logo=github&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat)
 
 ---
 
 ## ✨ Features
 
-- IP Geolocation Lookup តាមរយៈ ipwho.is API (ឥតគិតថ្លៃ, គ្មាន API key)
-- Interactive numbered menu (`[01]` `[02]` ...) : ជ្រើសរើសមុខងារជាមុន បន្ទាប់មកទើបបញ្ចូល IP
-- Scriptable mode : ដាក់ IP ជា argument លើ command-line
-- Hacker-style terminal UI (ASCII banner, ពណ៌ Neon Green, fake scan animation)
-- លេខម៉ឺនុយនីមួយៗមានពណ៌ផ្ទាល់ខ្លួន (green/cyan/yellow/magenta/red)
-- លទ្ធផល lookup បែងចែកជា LOCATION (cyan) និង NETWORK (yellow) sections
-- ស្វែងរកបានច្រើន IP ក្នុងលើកតែមួយ
-- `--json` flag : output JSON សម្រាប់ភ្ជាប់ជាមួយ script ផ្សេង
-- `--output FILE` : save លទ្ធផលទៅ JSON file
-- `--no-animation` : skip fake scan delay
-- IP validation + error handling (invalid IP, timeout, no internet)
-- In-memory cache : មិន query API ដដែលៗសម្រាប់ IP ដូចគ្នា
-- Unit tests ពេញលេញ (pytest, mock API)
-- Banner ស្វ័យប្រវត្តិកែតាមទំហំ terminal : មិនខូច/wrap ខុសនៅលើ Kali ឬ terminal ណាមួយ
-- Console width កំណត់កំរិតអតិបរមា : កុំឲ្យ box/divider វែងហួសហេតុនៅលើ terminal ធំ (ឧ. VS Code)
+- **IP Geolocation Lookup**: ប្រើ ipwho.is API (ឥតគិតថ្លៃ, គ្មាន API key) ស្វែងរកទីតាំង**ប្រហាក់ប្រហែល** តាមកម្រិត city/ISP (មិនមែនទីតាំងជាក់លាក់ GPS ទេ)
+- **Interactive Numbered Menu**: ម៉ឺនុយបែបលេខ `[01]` `[02]` `[03]` `[00]` ជ្រើសរើសមុខងារជាមុន បន្ទាប់មកទើបបញ្ចូល IP
+- **Scriptable Mode**: ដាក់ IP ជា argument លើ command-line ដោយផ្ទាល់ សម្រាប់ភ្ជាប់ជាមួយ script ផ្សេង
+- **Multiple IP Lookup**: ស្វែងរកបានច្រើន IP ក្នុងលើកតែមួយ
+- **Session History**: កត់ត្រារាល់ IP ដែលបាន lookup ក្នុងវគ្គនោះ ហើយអាចឆែកមើលឡើងវិញបាន
+- **Hacker-Style Terminal UI**: ASCII banner (thin outline style, ពណ៌ក្រហម), ម៉ឺនុយពណ៌ Neon Green/Yellow, fake scan animation
+- **Sectioned Result Panel**: លទ្ធផលបែងចែកជា LOCATION (cyan) និង NETWORK (yellow) ដាច់ដោយឡែក
+- **JSON Export**: `--json` flag សម្រាប់ output script-friendly, `--output FILE` សម្រាប់ save ទៅ JSON file
+- **Error Handling**: IP validation, timeout, no-internet ទាំងអស់មាន error message ច្បាស់លាស់
+- **In-Memory Cache**: មិន query API ដដែលៗសម្រាប់ IP ដូចគ្នាក្នុងវគ្គតែមួយ
+- **Terminal-Adaptive Banner**: Detect terminal width/encoding ដោយស្វ័យប្រវត្តិ មិនខូច/wrap ខុសទាល់តែសោះ (សាកល្បងលើ Kali)
+- **Unit Tests ពេញលេញ**: ប្រើ pytest + pytest-mock, mock API calls ទាំងអស់ (គ្មានហៅ network ពិតពេល test)
 
 ---
 
@@ -39,9 +42,9 @@ Banner detect terminal width និង encoding ដោយស្វ័យប្�
 
 | លក្ខខណ្ឌ terminal | អ្វីដែលបង្ហាញ |
 |---|---|
-| ធំ (≥76 columns) + UTF-8 | Full block-letter ASCII art "SCANNER \| IP" |
-| ធម្មតា (Kali default 80 columns) + UTF-8 | Boxed banner តូច តម្រូវទំហំពិត |
-| Non-UTF-8 locale / SSH minimal | ASCII box ធម្មតា (`+`, `-`, `\|`) គ្មាន Unicode |
+| ធំ (≥73 columns) + UTF-8 | Full block-letter ASCII art "ScannerIP" |
+| ធម្មតា (Kali default 80 columns) + UTF-8 | Full ASCII art (សមដោយស្វ័យប្រវត្តិ) |
+| តូចជាង 73 columns ឬ Non-UTF-8 locale | Boxed banner តូច / ASCII box ធម្មតា (`+`, `-`, `|`) |
 
 មិនចាំបាច់ setup អ្វីទេ : វា detect ដោយស្វ័យប្រវត្តិរាល់ដង run។
 
@@ -49,13 +52,14 @@ Banner detect terminal width និង encoding ដោយស្វ័យប្�
 
 ## 📋 Menu Options
 
-| លេខ | ពណ៌ | មុខងារ |
+| លេខ | ពណ៌ bracket | មុខងារ |
 |---|---|---|
-| `01` | បៃតង | Look up my own IP |
-| `02` | Cyan | Look up a specific IP |
-| `03` | លឿង | Look up several IPs at once |
-| `04` | ស្វាយ | Save last result to JSON file |
-| `00` | ក្រហម | Exit |
+| `01` | លឿង | Look up an IP address |
+| `02` | លឿង | Look up multiple IP addresses |
+| `03` | លឿង | Check history (IP ទាំងអស់ដែលបាន lookup ក្នុងវគ្គនេះ) |
+| `00` | លឿង | Exit |
+
+អាចវាយ `0`, `00`, `000` ។ល។ ឲ្យ Exit បានដូចគ្នា (normalize ដោយស្វ័យប្រវត្តិ)។
 
 ---
 
@@ -65,12 +69,12 @@ Banner detect terminal width និង encoding ដោយស្វ័យប្�
 terminal-ip-scanner/
 ├── scanner/
 │   ├── __init__.py
-│   ├── banner.py        → ASCII art, ពណ៌, text constants
+│   ├── banner.py         → ASCII art, ពណ៌, menu options, text constants
 │   ├── errors.py         → custom exceptions
-│   ├── cache.py           → in-memory lookup cache
-│   ├── lookup.py          → API calls (ipwho.is) : data ត្រឹមតែប៉ុណ្ណោះ
-│   ├── display.py         → terminal rendering ទាំងអស់ (Rich)
-│   └── cli.py             → arg parsing + interactive menu
+│   ├── cache.py          → in-memory lookup cache
+│   ├── lookup.py         → API calls (ipwho.is) : data ត្រឹមតែប៉ុណ្ណោះ
+│   ├── display.py        → terminal rendering ទាំងអស់ (Rich)
+│   └── cli.py            → arg parsing + interactive menu
 ├── tests/
 │   ├── test_lookup.py
 │   ├── test_cache.py
@@ -88,38 +92,50 @@ terminal-ip-scanner/
 
 ## 🚀 How to Run
 
-1. Clone ឬ download repository នេះ
-2. Install dependencies:
+1. Clone Repository :
+
+   ```bash
+   git clone <url-repo> terminal-ip-scanner
+   cd terminal-ip-scanner
+   ```
+
+2. Install Dependencies :
+
    ```bash
    pip install -r requirements.txt
    ```
-3. Run interactive mode:
+
+3. Run Interactive Mode :
+
    ```bash
    python main.py
    ```
-   ម៉ឺនុយបែបលេខនឹងបង្ហាញឡើង ជ្រើសរើសលេខ (`01`-`04`, `00` ដើម្បីចេញ) រួចបញ្ចូលព័ត៌មានតាមសំណើ (ឧ. IP address)
-4. ឬ run scriptable mode ដោយផ្ទាល់:
+
+   ម៉ឺនុយបែបលេខនឹងបង្ហាញឡើង ជ្រើសរើសលេខ (`01`-`03`, `00` ដើម្បីចេញ) រួចបញ្ចូលព័ត៌មានតាមសំណើ (ឧ. IP address)
+
+4. ឬ Run Scriptable Mode ដោយផ្ទាល់ :
+
    ```bash
    python main.py 8.8.8.8
    python main.py 8.8.8.8 1.1.1.1 --json
    python main.py 8.8.8.8 --output results.json
    ```
 
-### Development
+5. ដើម្បី Run Tests :
 
-```bash
-pip install -r requirements-dev.txt
-pytest -v
-```
-
----
-
-## Author
-
-**Mr. Siev E**
+   ```bash
+   pip install -r requirements-dev.txt
+   pytest -v
+   ```
 
 ---
 
-## License
+## 📄 License
 
-MIT : see [LICENSE](LICENSE).
+**Modified MIT License :** អ្នកអាចប្រើ ចម្លង កែប្រែ និងចែកចាយកូដនេះដោយសេរីសម្រាប់គោលបំណងអប់រំ ស្រាវជ្រាវ និងការធ្វើតេស្តដែលមានការអនុញ្ញាតត្រឹមត្រូវ ឲ្យតែរក្សាទុកសេចក្តីជូនដំណឹង Copyright។ ហាមយកទៅប្រើលើផ្លូវខុសច្បាប់ ឬព្យាបាទ។ មើលព័ត៌មានលម្អិតក្នុងឯកសារ [LICENSE](LICENSE)។
+
+---
+
+## 👤 Author
+
+**Built with ❤️ and code by Mr. Siev E**
