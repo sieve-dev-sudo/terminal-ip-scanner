@@ -3,7 +3,7 @@ Unit tests for scanner.cli. Argument parsing and run_targets orchestration.
 """
 
 from scanner import cache
-from scanner.cli import build_parser, interactive_menu, normalize_choice, run_targets
+from scanner.cli import build_parser, entrypoint, interactive_menu, normalize_choice, run_targets
 
 
 def setup_function():
@@ -85,19 +85,19 @@ class TestNormalizeChoice:
         assert normalize_choice("quit") == "quit"
 
 
+class TestEntrypoint:
+    def test_keyboard_interrupt_shows_session_closed(self, mocker):
+        mocker.patch("scanner.cli.main", side_effect=KeyboardInterrupt)
+        mock_closed = mocker.patch("scanner.display.print_session_closed")
+        mock_exit = mocker.patch("scanner.cli.sys.exit")
+
+        entrypoint()
+
+        mock_closed.assert_called_once()
+        mock_exit.assert_called_once_with(130)
+
+
 class TestInteractiveMenu:
-    def test_flexible_numeric_input_matches_option_01(self, mocker):
-        """"1", not just "01", should trigger the same self-lookup option."""
-        mocker.patch("scanner.display.print_banner")
-        mocker.patch("scanner.display.print_menu")
-        mocker.patch("scanner.display.prompt", side_effect=["1", "00"])
-        mocker.patch("scanner.display.print_session_closed")
-        mock_run = mocker.patch("scanner.cli.run_targets", return_value=[])
-
-        interactive_menu()
-        mock_run.assert_any_call([""], timeout=mocker.ANY)
-
-
     def test_option_00_exits_immediately(self, mocker):
         mocker.patch("scanner.display.print_banner")
         mocker.patch("scanner.display.print_menu")
@@ -107,15 +107,60 @@ class TestInteractiveMenu:
         interactive_menu()
         mock_closed.assert_called_once()
 
-    def test_option_01_looks_up_self(self, mocker):
+    def test_option_01_prompts_for_ip_then_looks_it_up(self, mocker):
         mocker.patch("scanner.display.print_banner")
         mocker.patch("scanner.display.print_menu")
-        mocker.patch("scanner.display.prompt", side_effect=["01", "00"])
+        mocker.patch("scanner.display.prompt", side_effect=["01", "8.8.8.8", "00"])
         mocker.patch("scanner.display.print_session_closed")
         mock_run = mocker.patch("scanner.cli.run_targets", return_value=[])
 
         interactive_menu()
-        mock_run.assert_any_call([""], timeout=mocker.ANY)
+        mock_run.assert_any_call(["8.8.8.8"], timeout=mocker.ANY)
+
+    def test_flexible_numeric_input_matches_option_01(self, mocker):
+        """"1", not just "01", should trigger the same specific-IP option."""
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", side_effect=["1", "8.8.8.8", "00"])
+        mocker.patch("scanner.display.print_session_closed")
+        mock_run = mocker.patch("scanner.cli.run_targets", return_value=[])
+
+        interactive_menu()
+        mock_run.assert_any_call(["8.8.8.8"], timeout=mocker.ANY)
+
+    def test_option_02_prompts_for_several_ips(self, mocker):
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", side_effect=["02", "8.8.8.8 1.1.1.1", "00"])
+        mocker.patch("scanner.display.print_session_closed")
+        mock_run = mocker.patch("scanner.cli.run_targets", return_value=[])
+
+        interactive_menu()
+        mock_run.assert_any_call(["8.8.8.8", "1.1.1.1"], timeout=mocker.ANY)
+
+    def test_option_03_shows_empty_history_before_any_lookup(self, mocker):
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch("scanner.display.prompt", side_effect=["03", "00"])
+        mocker.patch("scanner.display.print_session_closed")
+        mock_history = mocker.patch("scanner.display.print_history")
+
+        interactive_menu()
+        mock_history.assert_called_once_with([])
+
+    def test_option_03_shows_accumulated_history_after_a_lookup(self, mocker):
+        mocker.patch("scanner.display.print_banner")
+        mocker.patch("scanner.display.print_menu")
+        mocker.patch(
+            "scanner.display.prompt", side_effect=["01", "8.8.8.8", "03", "00"]
+        )
+        mocker.patch("scanner.display.print_session_closed")
+        fake_result = {"ip": "8.8.8.8", "city": "Mountain View", "country": "US"}
+        mocker.patch("scanner.cli.run_targets", return_value=[fake_result])
+        mock_history = mocker.patch("scanner.display.print_history")
+
+        interactive_menu()
+        mock_history.assert_called_once_with([fake_result])
 
     def test_invalid_choice_shows_error_and_continues(self, mocker):
         mocker.patch("scanner.display.print_banner")
